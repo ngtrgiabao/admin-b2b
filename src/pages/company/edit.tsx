@@ -1,8 +1,7 @@
 import { Col, Form, Input, Row, Select } from "antd"
-import { Edit } from "@refinedev/antd";
-import { redirect } from "react-router-dom";
+import { Edit, useForm } from "@refinedev/antd";
 import { UPDATE_COMPANY_MUTATION } from "@/graphql/mutations";
-import { useForm, useSelect } from "@refinedev/core";
+import { useSelect } from "@refinedev/core";
 import CustomAvatar from "@/components/custom-avatar";
 import { getNameInitials } from "@/utilities";
 import { GetFieldsFromList } from "@refinedev/nestjs-query";
@@ -10,6 +9,7 @@ import { UsersSelectQuery } from "@/graphql/types";
 import { USERS_SELECT_QUERY } from "@/graphql/queries";
 import SelectOptionWithAvatar from "@/components/skeleton/select-option-with-avatar";
 import { businessTypeOptions, companySizeOptions, industryOptions } from "@/constants";
+import { CompanyContactsTable } from "./contacts-table";
 
 const EditPage = () => {
   const { saveButtonProps, formProps, formLoading, queryResult } = useForm({
@@ -89,6 +89,9 @@ const EditPage = () => {
               </Form.Item>
             </Form>
           </Edit>
+        </Col>
+        <Col xs={24} xl={12}>
+          <CompanyContactsTable />
         </Col>
       </Row>
     </div>
