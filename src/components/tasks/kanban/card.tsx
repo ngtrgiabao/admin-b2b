@@ -4,6 +4,7 @@ import { TextIcon } from "@/components/text-icon"
 import { User } from "@/graphql/schema.types"
 import { getDateColor } from "@/utilities"
 import { ClockCircleOutlined, DeleteOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons"
+import { useDelete, useNavigation } from "@refinedev/core"
 import { Button, Card, ConfigProvider, Dropdown, Space, Tag, Tooltip, theme } from "antd"
 import { MenuProps } from "antd/lib"
 import dayjs from "dayjs"
@@ -26,9 +27,8 @@ const ProjectCard = ({
 }: ProjectCardProps) => {
   const { token } = theme.useToken();
 
-  const edit = () => {
-
-  }
+  const { edit } = useNavigation();
+  const { mutate } = useDelete();
 
   const dropdownItems = useMemo(() => {
     const dropdownItems: MenuProps['items'] = [
@@ -37,7 +37,7 @@ const ProjectCard = ({
         key: '1',
         icon: <EyeOutlined />,
         onClick: () => {
-          edit()
+          edit('task', id, 'replace')
         }
       },
       {
@@ -45,7 +45,15 @@ const ProjectCard = ({
         label: 'Delete card',
         key: '2',
         icon: <DeleteOutlined />,
-        onClick: () => { }
+        onClick: () => {
+          mutate({
+            resource: 'tasks',
+            id,
+            meta: {
+              operation: 'task'
+            }
+          })
+        }
       }
     ]
 
@@ -81,12 +89,16 @@ const ProjectCard = ({
         title={
           <Text ellipsis={{ tooltip: title }}>{title}</Text>
         }
-        onClick={() => edit()}
+        onClick={() => edit('tasks', id, 'replace')}
         extra={
           <Dropdown
             trigger={['click']}
             menu={{
-              items: dropdownItems
+              items: dropdownItems,
+              onPointerDown: (e) => { e.stopPropagation() },
+              onClick: (e) => {
+                e.domEvent.stopPropagation();
+              }
             }}
             placement="bottom"
             arrow={{ pointAtCenter: true }}
@@ -101,8 +113,8 @@ const ProjectCard = ({
                   }}
                 />
               }
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => { e.stopPropagation() }}
+              onClick={(e) => { e.stopPropagation() }}
             />
           </Dropdown>
         }

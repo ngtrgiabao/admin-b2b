@@ -1,5 +1,6 @@
-import { DndContext } from '@dnd-kit/core'
+import { DndContext, DragEndEvent, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { PropsWithChildren } from 'react'
+
 
 export const KanbanBoardContainer = ({ children }: PropsWithChildren) => {
   return (
@@ -25,9 +26,28 @@ export const KanbanBoardContainer = ({ children }: PropsWithChildren) => {
   )
 }
 
-export const KanbanBoard = ({ children }: PropsWithChildren) => {
+type KanbanBoardProps = {
+  onDragEnd: (event: DragEndEvent) => void
+}
+
+
+export const KanbanBoard = ({ children, onDragEnd }: PropsWithChildren<KanbanBoardProps>) => {
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 5,
+    }
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      distance: 5,
+    }
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
+
   return (
-    <DndContext>
+    <DndContext onDragEnd={onDragEnd} sensors={sensors}>
       {children}
     </DndContext>
   )
